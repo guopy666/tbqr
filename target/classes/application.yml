@@ -5,3 +5,7 @@ spring:
     view:
       prefix: /pages/
       suffix: .html
+  profiles:
+    active: dev
+logging:
+  config: classpath:logback-spring.xml

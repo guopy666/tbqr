@@ -1,0 +1,17 @@
+package com.yhshopping.tbqr.service;
+
+import com.yhshopping.tbqr.entity.Tbcontent;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+/**
+ * <p>
+ *  服务类
+ * </p>
+ *
+ * @author guopy
+ * @since 2021-03-13
+ */
+public interface ITbcontentService extends IService<Tbcontent> {
+
+    String getLatest();
+}

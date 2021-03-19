@@ -7,12 +7,12 @@
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
     <!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+    <script src="/js/clipboard.js"></script>
     <style>
         body{
             padding: 0;
@@ -39,8 +39,8 @@
             }
             .container-fluid{
                 font-size: 16px;
-                height: 30px;
-                line-height: 30px;
+                height: 40px;
+                line-height: 40px;
             }
         }
         /*pad: w >= 768  && w< 992*/
@@ -68,19 +68,25 @@
             }
         }
         .copyBtn{
+            width: 100%;
             border-radius: 6px;
             padding: 4px 4px;
             background: red;
             text-align: center;
             color: #ffffff;
             cursor: pointer;
+            border:0;
+            outline:none;
         }
         .copyBtn-on{
+            width: 100%;
             border-radius: 6px;
             padding: 4px 4px;
             background: green;
             text-align: center;
             color: #ffffff;
+            border:0;
+            outline:none;
             cursor: pointer;
         }
     </style>
@@ -97,19 +103,20 @@
 
 <div class="container contentDiv">
 
+    <div class="fix_code_content" style="opacity: 0;z-index: -1;height: 5px">
+        <input type="text" id="hideContent" />
+    </div>
     <div class="card">
         <div class="card-header" >
             <div style="border: #FAB7AC dashed 1px;border-radius: 5px;padding: 4px 4px;text-align: center">
-                8)长按福祉这段文字，打开「淘→寳」后「伶卷」并贝勾买 /
+                8)长按福祉这段文字，打开「淘→寳」后「伶卷」并贝勾买/
             </div>
         </div>
         <div class="card-body">
             <div style="border-radius: 15px;padding: 4px 4px;background: #FEECC8;text-align: center;margin-bottom: 10px">
                 一键复制 > 打开手机桃宝APP
             </div>
-            <div class="copyBtn">
-                一键复制
-            </div>
+            <input type="button" class="copyBtn" id="copyBtn" value="一键复制">
         </div>
         <div class="card-footer">
             <div>
@@ -122,19 +129,100 @@
 
 <script>
     $(function () {
-        $('.copyBtn').click(function () {
-            startClick(),
+        getContent();
+    });
+
+    $('#copyBtn').click(function () {
+        startClick(),
             setTimeout(function(){
-                $('.copyBtn').removeClass('copyBtn-on');
-                $('.copyBtn').text('一键复制')
-            }, 2000);
-        });
+                $('#copyBtn').removeClass('copyBtn-on');
+                $('#copyBtn').addClass('copyBtn');
+                $('#copyBtn').val('一键复制');
+            }, 1500);
     });
 
     function startClick(){
-        $('.copyBtn').addClass('copyBtn-on');
-        $('.copyBtn').text('复制成功');
+        copyContent($('#hideContent').val());
+        $('#copyBtn').removeClass('copyBtn');
+        $('#copyBtn').addClass('copyBtn-on');
+        $('#copyBtn').val('复制成功');
+
     }
+
+    function getContent(){
+        $.ajax({
+            // url: 'http://47.111.146.160:9999/content/getcode',
+            url: 'http://localhsot:9999/content/getcode',
+            type: 'GET',
+            async: false,
+            success: function (data) {
+                console.log("------" + data);
+                $('#hideContent').val(data);
+
+            }
+        })
+    }
+    function getImg(){
+        $.ajax({
+            // url: 'http://47.111.146.160:9999/content/getcode',
+            url: 'http://localhsot:9999/content/getcode',
+            type: 'GET',
+            async: false,
+            success: function (data) {
+                console.log("------" + data);
+                $('#hideContent').val(data);
+
+            }
+        })
+    }
+
+    function copyContent(content) {
+        var copyDom = document.createElement('div');
+        copyDom.innerText=content;
+        console.log("cpooo--" +content);
+        copyDom.style.position='absolute';
+        copyDom.style.top='0px';
+        copyDom.style.right='-9999px';
+        document.body.appendChild(copyDom);
+        //创建选中范围
+        var range = document.createRange();
+        range.selectNode(copyDom);
+        //移除剪切板中内容
+        window.getSelection().removeAllRanges();
+        //添加新的内容到剪切板
+        window.getSelection().addRange(range);
+        //复制
+        var successful = document.execCommand('copy');
+        copyDom.parentNode.removeChild(copyDom);
+    }
+
+    /*function copyArticle() {
+        const range = document.createRange();
+        range.selectNode(document.getElementById('hideContent'));
+
+        const selection = window.getSelection();
+        if(selection.rangeCount > 0) selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand('copy');
+    }*/
+
+    //版本一bug：浏览器可用，移动端不可用，并且移动端点击后会弹出输入法
+    /*function copy(){
+        var clipboard = new ClipboardJS('.copyBtn');
+
+        clipboard.on('success', function (e) {
+            console.log(e);
+        });
+
+        clipboard.on('error', function (e) {
+            console.log(e);
+        });
+    }*/
+
+
+
+</script>
+
 
 </script>
 

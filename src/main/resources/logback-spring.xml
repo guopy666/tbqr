@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <property name="logback.logDir" value="/opt/applog/tbqr"/>
+
+    <!--输出到控制台 ConsoleAppender-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--展示格式 layout-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d [%t] %-5level %logger{36}.%M\(%file:%line\) - %msg%n</pattern>
+            <pattern>%yellow(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{10}) - %cyan(%msg%n)</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="debugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--如果只是想要 DEBUG 级别的日志，只是过滤 DEBUG 还是会输出 INFO Error 日志，因为 Error 的级别高，
+            所以我们使用下面的策略，可以避免输出 Error 的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <!-- 用于配置符合过滤条件的操作 -->
+            <onMatch>ACCEPT</onMatch>
+            <!-- 用于配置不符合过滤条件的操作 -->
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <File>${logback.logDir}/debug.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${logback.logDir}/debug.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <!-- 单个日志文件最多 800MB -->
+            <maxFileSize>4096MB</maxFileSize>
+            <!--只保留最近30天的日志-->
+            <maxHistory>30</maxHistory>
+            <!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+            <!--<totalSizeCap>1GB</totalSizeCap>-->
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d [%t] %-5level %logger{36}.%M\(%file:%line\) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--如果只是想要 Info 级别的日志，只是过滤 info 还是会输出 Error 日志，因为 Error 的级别高，
+            所以我们使用下面的策略，可以避免输出 Error 的日志-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!--过滤 Error-->
+            <level>INFO</level>
+            <!-- info 和 error 日志打印在一个文件中 -->
+            <!-- 用于配置符合过滤条件的操作 -->
+            <!--<onMatch>ACCEPT</onMatch>-->
+            <!-- 用于配置不符合过滤条件的操作 -->
+            <!--<onMismatch>DENY</onMismatch>-->
+        </filter>
+        <File>${logback.logDir}/info.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${logback.logDir}/info.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            <!-- 单个日志文件最多 800MB -->
+            <maxFileSize>4096MB</maxFileSize>
+            <!--只保留最近30天的日志-->
+            <maxHistory>30</maxHistory>
+            <!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+            <!--<totalSizeCap>1GB</totalSizeCap>-->
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d [%t] %-5level %logger{36}.%M\(%file:%line\) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--<appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        &lt;!&ndash;如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter&ndash;&gt;
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        &lt;!&ndash;日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则
+            如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天
+            的日志改名为今天的日期。即，<File> 的日志都是当天的。
+        &ndash;&gt;
+        <File>${logback.logDir}/error.log</File>
+        &lt;!&ndash;滚动策略，按照时间滚动 TimeBasedRollingPolicy&ndash;&gt;
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            &lt;!&ndash;文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间&ndash;&gt;
+            <FileNamePattern>${logback.logDir}/error.%d{yyyy-MM-dd}.%i.log.gz</FileNamePattern>
+            &lt;!&ndash; 单个日志文件最多 800MB &ndash;&gt;
+            <maxFileSize>4096MB</maxFileSize>
+            &lt;!&ndash;只保留最近30天的日志&ndash;&gt;
+            <maxHistory>30</maxHistory>
+            &lt;!&ndash;用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志&ndash;&gt;
+            &lt;!&ndash;<totalSizeCap>1GB</totalSizeCap>&ndash;&gt;
+        </rollingPolicy>
+        &lt;!&ndash;日志输出编码格式化&ndash;&gt;
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d [%t] %-5level %logger{36}.%M\(%file:%line\) - %msg%n</pattern>
+        </encoder>
+    </appender>-->
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="debugLog"/>
+        <appender-ref ref="infoLog"/>
+        <!--<appender-ref ref="errorLog"/>-->
+    </root>
+</Configuration>
